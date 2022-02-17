@@ -1,0 +1,229 @@
+.icon-blank{
+	background:url('icons/blank.gif') no-repeat center center;
+}
+.icon-add{
+	background:url('icons/edit_add.png') no-repeat center center;
+}
+.icon-edit{
+	background:url('icons/pencil.png') no-repeat center center;
+}
+.icon-clear{
+	background:url('icons/clear.png') no-repeat center center;
+}
+.icon-remove{
+	background:url('icons/edit_remove.png') no-repeat center center;
+}
+.icon-save{
+	background:url('icons/filesave.png') no-repeat center center;
+}
+.icon-cut{
+	background:url('icons/cut.png') no-repeat center center;
+}
+.icon-ok{
+	background:url('icons/ok.png') no-repeat center center;
+}
+.icon-no{
+	background:url('icons/no.png') no-repeat center center;
+}
+.icon-cancel{
+	background:url('icons/cancel.png') no-repeat center center;
+}
+.icon-reload{
+	background:url('icons/reload.png') no-repeat center center;
+}
+.icon-search{
+	background:url('icons/search.png') no-repeat center center;
+}
+.icon-print{
+	background:url('icons/print.png') no-repeat center center;
+}
+.icon-help{
+	background:url('icons/help.png') no-repeat center center;
+}
+.icon-undo{
+	background:url('icons/undo.png') no-repeat center center;
+}
+.icon-redo{
+	background:url('icons/redo.png') no-repeat center center;
+}
+.icon-back{
+	background:url('icons/back.png') no-repeat center center;
+}
+.icon-sum{
+	background:url('icons/sum.png') no-repeat center center;
+}
+.icon-tip{
+	background:url('icons/tip.png') no-repeat center center;
+}
+.icon-filter{
+	background:url('icons/filter.png') no-repeat center center;
+}
+.icon-man{
+	background:url('icons/man.png') no-repeat center center;
+}
+.icon-lock{
+	background:url('icons/lock.png') no-repeat center center;
+}
+.icon-more{
+	background:url('icons/more.png') no-repeat center center;
+}
+
+
+.icon-mini-add{
+	background:url('icons/mini_add.png') no-repeat center center;
+}
+.icon-mini-edit{
+	background:url('icons/mini_edit.png') no-repeat center center;
+}
+.icon-mini-refresh{
+	background:url('icons/mini_refresh.png') no-repeat center center;
+}
+
+.icon-large-picture{
+	background:url('icons/large_picture.png') no-repeat center center;
+}
+.icon-large-clipart{
+	background:url('icons/large_clipart.png') no-repeat center center;
+}
+.icon-large-shapes{
+	background:url('icons/large_shapes.png') no-repeat center center;
+}
+.icon-large-smartart{
+	background:url('icons/large_smartart.png') no-repeat center center;
+}
+.icon-large-chart{
+	background:url('icons/large_chart.png') no-repeat center center;
+}
+
+/*维迅添加的图标*/
+/*项目*/
+.WinsunIcon-DataMonitor {
+    background: url('icons/DataMonitor.png') no-repeat center center;
+}
+.WinsunIcon-DosingMonitor {
+    background: url('icons/DosingMonitor.png') no-repeat center center;
+}
+.WinsunIcon-SideMonitor {
+    background: url('icons/SideMonitor.png') no-repeat center center;
+}
+.WinsunIcon-PlcMonitor {
+    background: url('icons/PlcMonitor.ico') no-repeat center center;
+}
+.WinsunIcon-LoadMonitor {
+    background: url('icons/LoadMonitor.ico') no-repeat center center;
+}
+.WinsunIcon-RackManage {
+    background: url('icons/RackManage.ico') no-repeat center center;
+}
+.WinsunIcon-FilterMaintain {
+    background: url('icons/FilterMaintain.ico') no-repeat center center;
+}
+.WinsunIcon-MetalConsume {
+    background: url('icons/MetalConsume.ico') no-repeat center center;
+}
+.WinsunIcon-ExitProject {
+    background: url('icons/ExitProject.ico') no-repeat center center;
+}
+
+/*参数*/
+.WinsunIcon-ProcessEdit {
+    background: url('icons/ProcessEdit.ico') no-repeat center center;
+}
+.WinsunIcon-DataEdit {
+    background: url('icons/DataEdit.ico') no-repeat center center;
+}
+.WinsunIcon-DataLoad {
+    background: url('icons/DataLoad.ico') no-repeat center center;
+}
+.WinsunIcon-LoadSort {
+    background: url('icons/LoadSort.ico') no-repeat center center;
+}
+.WinsunIcon-TankSelect {
+    background: url('icons/TankSelect.ico') no-repeat center center;
+}
+.WinsunIcon-TimeSet {
+    background: url('icons/TimeSet.ico') no-repeat center center;
+}
+.WinsunIcon-FBNumberSet {
+    background: url('icons/FBNumberSet.ico') no-repeat center center;
+}
+
+/*报表*/
+.WinsunIcon-OperationRecord {
+    background: url('icons/OperationRecord.ico') no-repeat center center;
+}
+.WinsunIcon-FaultRecord {
+    background: url('icons/FaultRecord.ico') no-repeat center center;
+}
+.WinsunIcon-DosingRecord {
+    background: url('icons/DosingRecord.ico') no-repeat center center;
+}
+.WinsunIcon-CurrentRecord {
+    background: url('icons/CurrentRecord.ico') no-repeat center center;
+}
+.WinsunIcon-ProductRecord {
+    background: url('icons/ProductRecord.ico') no-repeat center center;
+}
+
+/*用户*/
+.WinsunIcon-UserLogin {
+    background: url('icons/UserLogin.ico') no-repeat center center;
+}
+.WinsunIcon-UserExit {
+    background: url('icons/UserExit.ico') no-repeat center center;
+}
+
+/*窗口*/
+.WinsunIcon-StyleClassic {
+    /*background: url('icons/xx.ico') no-repeat center center;*/
+}
+.WinsunIcon-StyleConcise {
+    /*background: url('icons/xx.ico') no-repeat center center;*/
+}
+.WinsunIcon-StyleMaterial {
+    /*background: url('icons/xx.ico') no-repeat center center;*/
+}
+.WinsunIcon-StyleGray {
+    /*background: url('icons/xx.ico') no-repeat center center;*/
+}
+
+/*帮助*/
+.WinsunIcon-HelpFile {
+    background: url('icons/HelpFile.ico') no-repeat center center;
+}
+.WinsunIcon-About {
+    background: url('icons/About.ico') no-repeat center center;
+}
+
+/*用户登录*/
+.WinsunIcon-UserLogin {
+    background: url('icons/UserLogin.ico') no-repeat center center;
+}
+
+/*其它*/
+.WinsunIcon-Save {
+    background: url('icons/Save.ico') no-repeat center center;
+}
+.WinsunIcon-Load {
+    background: url('icons/Load.ico') no-repeat center center;
+}
+.WinsunIcon-Clear {
+    background: url('icons/Clear.ico') no-repeat center center;
+}
+.WinsunIcon-Query {
+    background: url('icons/Query.ico') no-repeat center center;
+}
+.WinsunIcon-Export {
+    background: url('icons/Export.png') no-repeat center center;
+}
+.WinsunIcon-ProductData {
+    background: url('icons/ProductData.ico') no-repeat center center;
+}
+.WinsunIcon-Copy {
+    background: url('icons/Copy.ico') no-repeat center center;
+}
+.WinsunIcon-Modify {
+    background: url('icons/Modify.ico') no-repeat center center;
+}
+
+

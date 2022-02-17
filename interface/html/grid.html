@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../jquery-easyui-1.7.0/jquery.min.js"></script>
+		<script src="vue.js"></script>
+	</head>
+
+	<body>
+	<div id="divMainWindow" style="margin-top: -2px; position: fixed; width: 99.9%; overflow: auto; left: 1px; border: 1px solid rgb(149, 184, 231); top: 69px; height: 924px;"> 
+        
+    <form method="post" action="./DataMonitor.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="Fss6/FGBX2+cg8v3TGOs5YQOqPUPTeFPU3f9OwiKYBrVkohExvYP+eCAfQlsBf5WjAkT+nma/OhmiqowqWwA5yTR4+raBwnjZ8a8LKdqOYA=">
+</div>
+
+
+    <div>
+
+        
+        <table style="margin-left:-2px;margin-top:-2px;">
+            <tbody><tr>
+                <td>
+                    <div>
+                        <img id="imgTankNotUseFBOffBlue" src="../Image/TankNotUseFBOffBlue.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankNotUseFBOffColourless" src="../Image/TankNotUseFBOffColourless.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankNotUseFBOffPurple" src="../Image/TankNotUseFBOffPurple.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankNotUseFBOnBlue" src="../Image/TankNotUseFBOnBlue.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankNotUseFBOnColourless" src="../Image/TankNotUseFBOnColourless.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankNotUseFBOnPurple" src="../Image/TankNotUseFBOnPurple.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankUseFBOffBlue" src="../Image/TankUseFBOffBlue.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankUseFBOffColourless" src="../Image/TankUseFBOffColourless.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankUseFBOffPurple" src="../Image/TankUseFBOffPurple.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankUseFBOnBlue" src="../Image/TankUseFBOnBlue.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankUseFBOnColourless" src="../Image/TankUseFBOnColourless.gif" width="56" hidden="hidden" height="57">
+                        <img id="imgTankUseFBOnPurple" src="../Image/TankUseFBOnPurple.gif" width="56" hidden="hidden" height="57">
+                        
+                        <img id="imgTransporterDown" src="../Image/TransporterDown.gif" width="51" hidden="hidden" height="73">
+                        <img id="imgTransporterUp" src="../Image/TransporterUp.gif" width="51" hidden="hidden" height="73">
+
+                        <canvas id="cvsTransporterAndStation" width="1910" height="267">
+                        </canvas>
+                    </div>
+                </td>
+            </tr>
+        </tbody></table>
+
+        
+        
+        
+
+    </div>
+
+    <script>
+
+        //画布
+        var TransporterAndStation = document.getElementById("cvsTransporterAndStation");
+        var Context = TransporterAndStation.getContext("2d");
+
+        //槽位和飞巴
+        var imgTankNotUseFBOffBlue = document.getElementById("imgTankNotUseFBOffBlue");
+        var imgTankNotUseFBOffColourless = document.getElementById("imgTankNotUseFBOffColourless");
+        var imgTankNotUseFBOffPurple = document.getElementById("imgTankNotUseFBOffPurple");
+        var imgTankNotUseFBOnBlue = document.getElementById("imgTankNotUseFBOnBlue");
+        var imgTankNotUseFBOnColourless = document.getElementById("imgTankNotUseFBOnColourless");
+        var imgTankNotUseFBOnPurple = document.getElementById("imgTankNotUseFBOnPurple");
+        var imgTankUseFBOffBlue = document.getElementById("imgTankUseFBOffBlue");
+        var imgTankUseFBOffColourless = document.getElementById("imgTankUseFBOffColourless");
+        var imgTankUseFBOffPurple = document.getElementById("imgTankUseFBOffPurple");
+        var imgTankUseFBOnBlue = document.getElementById("imgTankUseFBOnBlue");
+        var imgTankUseFBOnColourless = document.getElementById("imgTankUseFBOnColourless");
+        var imgTankUseFBOnPurple = document.getElementById("imgTankUseFBOnPurple");
+
+        //天车
+        var imgTransporterDown = document.getElementById("imgTransporterDown");
+        var imgTransporterUp = document.getElementById("imgTransporterUp");
+
+        var ProcessErrorState;//流程异常状态
+        var TimeoutState;//超时状态
+        var VoltageCurrentErrorState;//电压电流异常状态
+        var FbState;//飞巴状态
+        var TankSelectState;//槽位选择状态
+        var TankName;//槽位名称
+        var TransporterStatus;//天车状态
+        var TransporterHookPosition;//天车吊钩位置
+        var TransporterPartNumber;//天车的料号
+        var TransporterProcessNumber;//天车的流程号
+
+        //jQuery初始化完成
+        $(function () {
+            try {
+                Init();//初始化
+                ReadProcessErrorStateAndTimeoutStateAndVoltageCurrentErrorState();//取流程异常状态、取超时状态、取电压电流异常状态
+                ReadTransporterAndFbState();//取天车和飞巴的各种状态
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_$",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }    
+        })
+
+        //初始化
+        function Init() {
+            try {
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_Init",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }
+        }
+
+        //取流程异常状态、取超时状态、取电压电流异常状态
+        function ReadProcessErrorStateAndTimeoutStateAndVoltageCurrentErrorState() {
+            try {
+                var Parameter = {};
+
+                //取流程异常状态
+                $.post("../BLL/DataMonitor.ashx?Action=0002", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        ProcessErrorState = JSON.parse(ReceiveData);//将流程异常状态转为Bool数组
+                    }
+                });
+
+                //取超时状态
+                $.post("../BLL/DataMonitor.ashx?Action=0003", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        TimeoutState = JSON.parse(ReceiveData);//将超时状态转为Bool数组
+                    }
+                });
+
+                //取电压电流异常状态
+                $.post("../BLL/DataMonitor.ashx?Action=0004", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        VoltageCurrentErrorState = JSON.parse(ReceiveData);//将电压电流异常状态转为Bool数组
+                    }
+                });
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_ReadProcessErrorStateAndTimeoutStateAndVoltageCurrentErrorState",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }
+        }
+
+        //取天车和飞巴的各种状态
+        function ReadTransporterAndFbState() {
+            try {
+                var Parameter = {};
+
+                //从后台取飞巴状态
+                $.post("../BLL/DataMonitor.ashx?Action=0008", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        FbState = JSON.parse(ReceiveData);//将飞巴状态转为int数组
+                    }
+                });
+
+                //从后台取槽位选择状态
+                $.post("../BLL/DataMonitor.ashx?Action=0009", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        TankSelectState = JSON.parse(ReceiveData);//将槽位选择状态转为int数组
+                    }
+                });
+
+                //从后台取槽位名称
+                $.post("../BLL/DataMonitor.ashx?Action=0011", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        TankName = JSON.parse(ReceiveData);//将槽位名称转为string数组
+                    }
+                });
+
+                //从后台取天车状态
+                $.post("../BLL/DataMonitor.ashx?Action=0012", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        TransporterStatus = JSON.parse(ReceiveData);//将天车状态转为int数组
+                    }
+                });
+
+                //从后台取天车吊钩位置
+                $.post("../BLL/DataMonitor.ashx?Action=0013", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        TransporterHookPosition = JSON.parse(ReceiveData);//将天车吊钩位置转为int数组
+                    }
+                });
+
+                //从后台取天车的料号
+                $.post("../BLL/DataMonitor.ashx?Action=0014", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        TransporterPartNumber = JSON.parse(ReceiveData);//将天车的料号转为string数组
+                    }
+                });
+
+                //从后台取天车的流程号
+                $.post("../BLL/DataMonitor.ashx?Action=0015", Parameter, function (ReceiveData) {
+                    if (ReceiveData != "") {
+                        TransporterProcessNumber = JSON.parse(ReceiveData);//将天车的流程号转为string数组
+                    }
+                });
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_ReadTransporterAndFbState",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }
+        } 
+
+        //天车移动和飞巴显示
+        function TransporterMoveAndFbDisplay() {
+            try {
+                var TankWidth = 31;//每个槽位的宽度(标准值:31),如果要加宽槽位宽度请在31的基础上加2的整倍数,如：33、35、37、51......另外槽位宽度也不要小于31，这样将不能显示4位数字
+                var TempIndex = 0;
+                var Temp = "";
+                var Row1FirstXPostion = 30;//第1排槽位X轴的位置
+                var Row2FirstXPostion = 30;//第2排槽位X轴的位置
+                var Row3FirstXPostion = 30;//第3排槽位X轴的位置
+                var Row4FirstXPostion = 30;//第4排槽位X轴的位置
+                var Row5FirstXPostion = 30;//第5排槽位X轴的位置
+                var Row1YPostion = 50;//第1排槽位Y轴的位置
+                var Row2YPostion = 180;//第2排槽位Y轴的位置
+                var Row3YPostion = 310;//第3排槽位Y轴的位置
+                var Row4YPostion = 440;//第4排槽位Y轴的位置
+                var Row5YPostion = 570;//第5排槽位Y轴的位置
+
+                TransporterAndStation.width = TransporterAndStation.width;//清空画布
+                Context.fillStyle = "#000000";//设置颜色
+                Context.textAlign = "left";//设置水平对齐方式
+                Context.textBaseline = "middle"; //设置垂直对齐方式
+
+                //第1排槽位、槽号、槽名
+                TempIndex = 0;
+                for (var Tank = Row1StartTankNumber(); Tank <= Row1EndTankNumber(); Tank++)//显示器从左向右，槽位从小到大
+                {
+                    var XPostion = Row1FirstXPostion + TempIndex * TankWidth;
+                    Context.drawImage(ReturnTankState(Tank, TankSelectState[Tank], FbState[Tank]), XPostion, Row1YPostion);
+                    Temp = IntegerFormate(Tank, 3) + "#";//槽号
+                    Context.font = "12px bold 黑体";//设置字体
+                    Context.fillText(Temp, XPostion + 2, Row1YPostion + 65);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                    Temp = TankName[Tank];//槽名
+                    Context.font = "14px bold 黑体";//设置字体
+                    Context.fillText(Temp, XPostion + 2, Row1YPostion + 77);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                    TempIndex++;
+                }
+
+                //第2排槽位、槽号、槽名
+                TempIndex = 0;
+                //for (var Tank = Row2StartTankNumber(); Tank <= Row2EndTankNumber(); Tank++) {//显示器从左向右，槽位从小到大
+                for (var Tank = Row2EndTankNumber(); Tank >= Row2StartTankNumber(); Tank--) {//显示器从左向右，槽位从大到小
+                    var XPostion = Row2FirstXPostion + TempIndex * TankWidth;
+                    Context.drawImage(ReturnTankState(Tank, TankSelectState[Tank], FbState[Tank]), XPostion, Row2YPostion);
+                    Temp = IntegerFormate(Tank, 3) + "#";//槽号
+                    Context.font = "12px bold 黑体";//设置字体
+                    Context.fillText(Temp, XPostion + 2 , Row2YPostion + 65);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                    Temp = TankName[Tank];//槽名
+                    Context.font = "14px bold 黑体";//设置字体
+                    Context.fillText(Temp, XPostion + 2 , Row2YPostion + 77);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                    TempIndex++;
+                }
+
+                //天车
+                Context.font = "12px bold 黑体";//设置字体
+                for (var Index = 0; Index < TransporterQty(); Index++) {
+                    var XPostion = 0;//天车X轴位置
+                    var YPostion = 0;//天车Y轴位置
+                    var TransporterMessage = "";
+
+                    if (Row1StartTankNumber() <= TransporterStatus[Index * 4] && TransporterStatus[Index * 4] <= Row1EndTankNumber()) {//第1排
+                        XPostion = (TransporterStatus[Index * 4] - Row1StartTankNumber() + 1) * TankWidth - 3;//显示器从左向右，槽位从小到大
+                        YPostion = 9;
+                    } else if (Row2StartTankNumber() <= TransporterStatus[Index * 4] && TransporterStatus[Index * 4] <= Row2EndTankNumber()) {//第2排
+                        //XPostion = (TransporterStatus[Index * 4] - Row2StartTankNumber() + 1) * TankWidth - 3;//显示器从左向右，槽位从小到大
+                        XPostion = (Row2EndTankNumber() - TransporterStatus[Index * 4] + 1) * TankWidth - 3;//显示器从左向右，槽位从大到小
+                        YPostion = 139;
+                    }
+                    else {//第3排
+                        XPostion = (TransporterStatus[Index * 4] - Row3StartTankNumber() + 1) * TankWidth - 3;//显示器从左向右，槽位从小到大
+                        YPostion = 269;
+                    }
+
+                    if (TransporterHookPosition[Index * 2] == 42) {//天车在下限位
+                        Context.drawImage(imgTransporterDown, XPostion, YPostion);
+                    }
+                    else {//天车在上限位或中间位
+                        Context.drawImage(imgTransporterUp, XPostion, YPostion);
+                    }
+
+                    var strFault = "";
+                    switch (LanguageCn_Tw_En()) {
+                        case "0":
+                            strFault = "故障";
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (TransporterStatus[Index * 4 + 2] == 10)//10表示天车有故障
+                    {
+                        Context.fillStyle = "#ff0000";//设置红色
+                        if (TransporterPartNumber[Index] == "")//无料号
+                        {
+                            TransporterMessage = IntegerFormate(Index + 1, 2) + "#" + ">" + TransporterStatus[Index * 4 + 1];//显示如:01#>2
+                            Context.fillText(TransporterMessage, XPostion + 41, YPostion + 3);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                            Context.fillText(strFault, XPostion + 41, YPostion + 15);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                        }
+                        else//有料号
+                        {
+                            TransporterMessage = IntegerFormate(Index + 1, 2) + "#" + ">" + TransporterStatus[Index * 4 + 1];//显示如:01#>2
+                            Context.fillText(TransporterMessage, XPostion + 41, YPostion + 3);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                            Context.fillText(TransporterPartNumber[Index], XPostion + 41, YPostion + 15);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                            Context.fillText(TransporterProcessNumber[Index], XPostion + 41, YPostion + 27);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                            Context.fillText(strFault, XPostion + 41, YPostion + 39);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                        }
+                    }
+                    else//表示天车无故障
+                    {
+                        Context.fillStyle = "#000000";//设置红色
+                        if (TransporterPartNumber[Index] == "")//无料号
+                        {
+                            TransporterMessage = IntegerFormate(Index + 1, 2) + "#" + ">" + TransporterStatus[Index * 4 + 1];//显示如:01#>2
+                            Context.fillText(TransporterMessage, XPostion + 41, YPostion + 3);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                        }
+                        else//有料号
+                        {
+                            TransporterMessage = IntegerFormate(Index + 1, 2) + "#" + ">" + TransporterStatus[Index * 4 + 1];//显示如:01#>2
+                            Context.fillText(TransporterMessage, XPostion + 41, YPostion + 3);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                            Context.fillText(TransporterPartNumber[Index], XPostion + 41, YPostion + 15);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                            Context.fillText(TransporterProcessNumber[Index], XPostion + 41, YPostion + 27);//绘制文字(参数:要写的字,X坐标,Y坐标)
+                        }
+                    }
+                }
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_TransporterMoveAndFbDisplay",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }
+        } 
+
+        //返回槽位状态
+        function ReturnTankState(TankNumber, TankSelectState,FbOnOffState) {
+            var imgTemp;
+            try {
+                
+                switch (parseInt(TankNumber)) {
+                    //无色(上料、下料、暂存、交换、烘干等无液体槽)
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
+                    case 9:
+                    case 10:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 16:
+                    case 17:
+                    case 18:
+                    case 19:
+                    case 20:
+                    case 21:
+                    case 22:
+                    case 37:
+                    case 38:
+                    case 49:
+                    case 60:
+                    case 88:
+                    case 106:
+                        if (TankSelectState == "true")//槽位要使用
+                        {
+                            if (FbOnOffState == "true")//FB On
+                            {
+                                imgTemp = imgTankUseFBOnColourless;
+                            }
+                            else//FB Off
+                            {
+                                imgTemp = imgTankUseFBOffColourless;
+                            }
+                        }
+                        else//槽位不使用
+                        {
+                            if (FbOnOffState == "true")//FB On
+                            {
+                                imgTemp = imgTankNotUseFBOnColourless;
+                            }
+                            else//FB Off
+                            {
+                                imgTemp = imgTankNotUseFBOffColourless;
+                            }
+                        }
+                        break;
+                        //紫色(药水槽)
+                    case 23:
+                    case 24:
+                    case 27:
+                    case 28:
+                    case 30:
+                    case 31:
+                    case 34:
+                    case 35:
+                    case 40:
+                    case 41:
+                    case 45:
+                    case 47:
+                    case 61:
+                    case 64:
+                    case 65:
+                    case 68:
+                    case 69:
+                    case 70:
+                    case 71:
+                    case 72:
+                    case 73:
+                    case 74:
+                    case 75:
+                    case 76:
+                    case 77:
+                    case 78:
+                    case 79:
+                    case 82:
+                    case 83:
+                    case 84:
+                    case 85:
+                    case 91:
+                    case 92:
+                    case 93:
+                    case 96:
+                    case 99:
+                        if (TankSelectState == "true")//槽位要使用
+                        {
+                            if (FbOnOffState == "true")//FB On
+                            {
+                                imgTemp = imgTankUseFBOnPurple;
+                            }
+                            else//FB Off
+                            {
+                                imgTemp = imgTankUseFBOffPurple;
+                            }
+                        }
+                        else//槽位不使用
+                        {
+                            if (FbOnOffState == "true")//FB On
+                            {
+                                imgTemp = imgTankNotUseFBOnPurple;
+                            }
+                            else//FB Off
+                            {
+                                imgTemp = imgTankNotUseFBOffPurple;
+                            }
+                        }
+                        break;
+                        //蓝色(非药水槽)
+                    default:
+                        if (TankSelectState == "true")//槽位要使用
+                        {
+                            if (FbOnOffState == "true")//FB On
+                            {
+                                imgTemp = imgTankUseFBOnBlue;
+                            }
+                            else//FB Off
+                            {
+                                imgTemp = imgTankUseFBOffBlue;
+                            }
+                        }
+                        else//槽位不使用
+                        {
+                            if (FbOnOffState == "true")//FB On
+                            {
+                                imgTemp = imgTankNotUseFBOnBlue;
+                            }
+                            else//FB Off
+                            {
+                                imgTemp = imgTankNotUseFBOffBlue;
+                            }
+                        }
+                        break;
+                }
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_ReturnTankState",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }
+            return imgTemp;
+        }
+
+        //加载LineStatusTable数据
+        function LoadDataMonitorData() {
+            try {
+                $("#dgDataMonitor").datagrid({
+                    width: 1910,
+                    height: 508,
+                    url: "../BLL/DataMonitor.ashx?Action=0001",
+                    columns: [[
+                        { field: "StationNumber", title: "槽号", width: "40px", align: "left", },
+                        { field: "Process", title: "工艺", width: "115px", align: "left", },
+                        { field: "TransporterAutoLimits", title: "天车自动范围", width: "100px", align: "left", },
+                        { field: "TransporterStation", title: "天车位置", width: "113px", align: "left", },
+                        { field: "TpFB1Status", title: "天车状态", width: "80px", align: "left", styler: function (Value, Row, Index) {
+                                if (Row.TpFB1Status == "故障..." || Row.TpFB1Status == "Fault...") {
+                                    return "background-color:#ff0000;color:#000000;";//天车故障改变背景颜色
+                                }
+                            }
+                        },
+                        { field: "TpFB2Status", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "SetImmersionTime", title: "设定时间", width: "65px", align: "left", },
+                        { field: "ImmersionTime", title: "浸泡时间", width: "65px", align: "left", styler: function (Value, Row, Index) {
+                                if (TimeoutState[Index+1] == "true") {
+                                    return "background-color:#ff0000;color:#000000;";//超时改变背景颜色
+                                }
+                            }
+                        },
+                        { field: "SurplusImmersionTime", title: "剩余时间", width: "65px", align: "left", },
+                        { field: "NextStationNumber", title: "下一工位", width: "85px", align: "left", },
+                        { field: "UnloadTime", title: "下料时间", width: "100px", align: "left", },
+                        { field: "Temperature", title: "温度", width: "135px", align: "left", },
+                        { field: "PH", title: "pH", width: "0px", align: "left", hidden: "true", },
+                        { field: "PCode1", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "PartNumber1", title: "料号", width: "110px", align: "left", },
+                        { field: "LotNumber1", title: "批号", width: "56px", align: "left", },
+                        { field: "Qty1", title: "数量", width: "40px", align: "left", },
+                        { field: "HangerQty", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "ProcessNumber", title: "流程号", width: "50px", align: "left", styler: function (Value, Row, Index) {
+                                if (ProcessErrorState[Index+1] == "true") {
+                                    return "background-color:#ff0000;color:#000000;";//流程异常改变背景颜色
+                                }
+                            }
+                        },
+                        { field: "ProcessName", title: "流程名称", width: "100px", align: "left", },
+                        { field: "ProcessStep", title: "步号", width: "40px", align: "left", },
+                        { field: "FB1SetAmpOrVolA", title: "设定电压电流", width: "195px", align: "left", },
+                        { field: "FB1ActiveAmpOrVolA", title: "实际电压电流", width: "195px", align: "left", styler: function (Value, Row, Index) {
+                                if (VoltageCurrentErrorState[Index+1] == "true") {
+                                    return "background-color:#ff0000;color:#000000;";//电压电流异常改变背景颜色
+                                }
+                            }
+                        },
+                        { field: "FB1SetAmpOrVolB", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "FB1ActiveAmpOrVolB", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "RectifierState", title: "整流器状态", width: "95px", align: "left", },
+                        { field: "PCode2", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "PartNumber2", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "LotNumber2", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "Qty2", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "FB2SetAmpOrVolA", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "FB2ActiveAmpOrVolA", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "FB2SetAmpOrVolB", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "FB2ActiveAmpOrVolB", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "FBNumber1", title: "巴号", width: "50px", align: "left", },
+                        { field: "FBNumber2", title: "", width: "0px", align: "left", hidden: "true", },
+                        { field: "Other", title: "其它", width: "0px", align: "left", hidden: "true", },
+                    ]],
+                    onDblClickRow: function (RowIndex, RowData) {
+                        if (RowIndex >= 0) {
+                            //$.messager.alert('你选择的是:', "行:" + RowIndex + "数据:" + RowData.StationNumber + "/" + RowData.Process + "/" + RowData.SetImmersionTime + "/" + RowData.ImmersionTime);
+                        }
+                    },
+                });
+                $("#dgDataMonitor").datagrid("loaded");//隐藏正在加载状态,这句话要放在数据加载的后面
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_LoadDataMonitorData",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }    
+        }
+
+        //加载CurrentFaultTable数据
+        function LoadCurrentFault() {
+            try {
+                $("#dgCurrentFault").datagrid({
+                    width: 1910,
+                    height: 112,
+                    url: "../BLL/DataMonitor.ashx?Action=0005",
+                    columns: [[
+                        { field: "FaultAddress", title: "地址", width: "200px", align: "left", },
+                        { field: "FaultDescription", title: "故障信息", width: "1000px", align: "left", },
+                        { field: "FaultDatetime", title: "日期时间", width: "200px", align: "left", },
+                        { field: "FaultNote", title: "备注", width: "494px", align: "left", },
+                    ]],
+                });
+                $("#dgCurrentFault").datagrid("loaded");//隐藏正在加载状态,这句话要放在数据加载的后面
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_LoadCurrentFault",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }
+        }
+
+        //间隔时间执行程序
+        setInterval(function () {
+            try {
+                ReadProcessErrorStateAndTimeoutStateAndVoltageCurrentErrorState();//取流程异常状态、取超时状态、取电压电流异常状态
+                LoadDataMonitorData();//加载LineStatusTable数据
+                LoadCurrentFault(); //加载CurrentFaultTable数据
+                ReadTransporterAndFbState();//取天车和飞巴的各种状态
+                TransporterMoveAndFbDisplay();//天车移动和飞巴显示
+            }
+            catch (ex) {
+                var Error = {
+                    ErrorIP: "xxx.xxx.xxx.xxx",
+                    ErrorSource: "DataMonitor.aspx_setInterval",
+                    ErrorInfomation: ex.message,
+                }
+                $.post("../BLL/ErrorLog.ashx?Action=0001", Error, function (ReceiveData) { });
+            }   
+        }, 1000);
+
+    </script>
+
+    </form>
+
+    </div>	
+	</body>
+</html>
