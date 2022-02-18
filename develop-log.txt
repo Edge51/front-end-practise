@@ -1,0 +1,6 @@
+2022.02.17
+start project.
+initialize with simple implement for cube display.
+
+2022.02.18
+try context.drawImage to control display.

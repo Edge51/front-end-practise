@@ -1,42 +1,36 @@
 <!DOCTYPE html>
 <html>
 	<head>
-
-		<style type="text/css">
-			img.hook{
-				z-index: 4;
-				margin-bottom: -15px;
-			}
-			img.cube{
-				z-index: 0;
-			}
-		</style>
+		<script src="./cubeDisplay.js"></script>
 	</head>
-	<div>
-		<table style="margin-left: -2px;margin-top: 60px;">
-			<tbody>
-				<tr>
-					<td>
-						<img class="hook" src="../Image/TransporterDown.gif">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<img id="imgTankNotUseFBOffBlue" class="cube" src="../Image/TankNotUseFBOffBlue.gif" width="56" height="57">
-						<img id="imgTankNotUseFBOffColourless" src="../Image/TankNotUseFBOffColourless.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankNotUseFBOffPurple" src="../Image/TankNotUseFBOffPurple.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankNotUseFBOnBlue" src="../Image/TankNotUseFBOnBlue.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankNotUseFBOnColourless" src="../Image/TankNotUseFBOnColourless.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankNotUseFBOnPurple" src="../Image/TankNotUseFBOnPurple.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankUseFBOffBlue" src="../Image/TankUseFBOffBlue.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankUseFBOffColourless" src="../Image/TankUseFBOffColourless.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankUseFBOffPurple" src="../Image/TankUseFBOffPurple.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankUseFBOnBlue" src="../Image/TankUseFBOnBlue.gif" width="56" height="57" style="margin-left: -27px;">
-						<img id="imgTankUseFBOnColourless" src="../Image/TankUseFBOnColourless.gif" width="56" height="57" style="margin-left: -27px;">
-					</td>
-				</tr>
-			</tbody>
+	<body onload="draw();">
+		<div>
+			<table style="margin-left: -2px;margin-top: 60px;">
+				<tbody>
+					<tr>
+						<td>
+							<img id="imgTankNotUseFBOffBlue" class="cube" src="../Image/TankNotUseFBOffBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOffColourless" src="../Image/TankNotUseFBOffColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOffPurple" src="../Image/TankNotUseFBOffPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOnBlue" src="../Image/TankNotUseFBOnBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOnColourless" src="../Image/TankNotUseFBOnColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOnPurple" src="../Image/TankNotUseFBOnPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOffBlue" src="../Image/TankUseFBOffBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOffColourless" src="../Image/TankUseFBOffColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOffPurple" src="../Image/TankUseFBOffPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOnBlue" src="../Image/TankUseFBOnBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOnColourless" src="../Image/TankUseFBOnColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOnPurple" src="../Image/TankUseFBOnPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTransporterDown" src="../Image/TransporterDown.gif" width="51" height="73" hidden="hidden">
+							<img id="imgTransporterUp" src="../Image/TransporterUp.gif" width="51" height="73" hidden="hidden">
 
-		</table>
-	</div>
+							<canvas id="cvsTransporterAndStation" width="1910" height="267"></canvas>
+						</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
+	</body>
+	
 </html>
