@@ -1,0 +1,13 @@
+(pole_position pole1 slot5)
+(pole_position pole2 slot15)
+(pole_position pole3 slot25)
+(pole_position pole4 slot35)
+(pole_position pole5 slot45)
+(pole_position pole6 slot55)
+(pole_position pole7 slot65)
+(pole_position pole8 slot75)
+(pole_position pole9 slot85)
+(pole_position pole10 slot95)
+
+(product_at p1 slot16)
+(product_at p2 slot16)
