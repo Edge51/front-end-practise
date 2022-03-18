@@ -1,0 +1,275 @@
+
+<html>  
+    <head>  
+        <title>WebSocket</title>  
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+    </head>  
+    <body>
+		<div>
+			<table>
+				<tbody>
+					<tr>
+						<td>
+							<img id="imgTankNotUseFBOffBlue" class="cube" src="../Image/TankNotUseFBOffBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOffColourless" src="../Image/TankNotUseFBOffColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOffPurple" src="../Image/TankNotUseFBOffPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOnBlue" src="../Image/TankNotUseFBOnBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOnColourless" src="../Image/TankNotUseFBOnColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankNotUseFBOnPurple" src="../Image/TankNotUseFBOnPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOffBlue" src="../Image/TankUseFBOffBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOffColourless" src="../Image/TankUseFBOffColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOffPurple" src="../Image/TankUseFBOffPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOnBlue" src="../Image/TankUseFBOnBlue.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOnColourless" src="../Image/TankUseFBOnColourless.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTankUseFBOnPurple" src="../Image/TankUseFBOnPurple.gif" width="56" height="57" hidden="hidden">
+							<img id="imgTransporterDown" src="../Image/TransporterDown.gif" width="51" height="73" hidden="hidden">
+							<img id="imgTransporterUp" src="../Image/TransporterUp.gif" width="51" height="73" hidden="hidden">
+
+							<canvas id="cvsTransporterAndStation" width="1910" height="2000"></canvas>
+						</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
+    </body> 
+	<script src="jquery.js"></script>
+	<!-- stomp协议的客户端脚本 -->
+	<script src="stomp.js"></script>
+	<!-- SockJS的客户端脚本 -->
+	<script src="sockjs-client.js"></script>	
+    <script type="text/javascript"> 
+	// 测试：slot数量
+	var testSlotNumber = 100;
+
+	var testDataCube = [];
+	for(let i = 0; i < testSlotNumber; i++){
+		testDataCube.push(7);
+	}
+
+	// 测试：初始状态中含有物体的slot值设为10, testDataCube[0] = 10代表初始状态slot0有物品
+	testDataCube[0] = 10;
+	testDataCube[1] = 10;
+
+	// 测试：初始状态中物品所在的slot，-1表示物品不存在,
+	// 如 testDataItem=[-1, 20, 30] 表示p0不存在，p1在slot20，p2在slot30
+	var testDataItem = [-1, 0, 1];
+
+	// 测试：初始状态中车所在的slot
+	// 如： testDataFB = [30, 45, 50] 表示pole0在slot30，pole1在slot45，pole2在slot50
+	var testDataFB = [1, 9, 18, 22];
+
+
+	var poleStatus = [];
+	for(let i = 0; i < testDataFb.length; i++){
+		poleStatus.push(0);
+	}
+
+	if (typeof WebSocket == 'undefined') {
+    	console.log('不支持websocket')
+	}
+	var ws = new WebSocket('ws://192.168.1.161:15674/ws');
+	// 获得Stomp client对象
+	var client = Stomp.over(ws);
+ 
+	// SockJS does not support heart-beat: disable heart-beats
+	client.heartbeat.outgoing = 0;
+	client.heartbeat.incoming = 0;
+ 
+	// 定义连接成功回调函数
+	var on_connect = function(x) {
+		//data.body是接收到的数据
+		client.subscribe("/queue/hello", function(data) {
+			var msg = data.body;
+			var start = msg.indexOf('(') + 1;
+			var stop = msg.indexOf(')');
+			msg = msg.substr(start, stop - start);
+			execute(parseOperation(msg.split(' ')));
+			draw();
+			sleep(1000);
+		});
+	};
+ 
+	// 定义错误时回调函数
+	var on_error =  function() {
+		console.log('error');
+	};
+ 
+	// 连接RabbitMQ
+	client.connect('user_edge51', 'user_edge51', on_connect, on_error, 'electroplating');
+
+
+	function draw() {
+		// 画布
+		var cvsTransporterAndStation = document.getElementById("cvsTransporterAndStation");
+		var context = cvsTransporterAndStation.getContext("2d");
+		//天车
+
+		for (let round = 0; round < 40; round++) {
+			context.clearRect(0, 0, cvsTransporterAndStation.width, cvsTransporterAndStation.height)
+			
+			//var operations = getOperations();
+			//execute(operations);
+			//prompt(testDataFB[3]);
+			try {
+				var row1FirstXPostion = 30;
+				var row1TankYPosition = 50;
+				var tankWidth = 31;
+				
+				context.fillStyle = "#000000";//设置颜色
+				context.textAlign = "left";//设置水平对齐方式
+				context.textBaseline = "middle"; //设置垂直对齐方式
+
+				
+				for(let tankIndex = 0, count = 0; tankIndex< testDataCube.length; tankIndex++){
+					if(count == 30){
+						count = 0;
+						row1TankYPosition += 130;
+					}
+					var xPostion = row1FirstXPostion + tankWidth * (tankIndex % 30);
+					context.drawImage(cubeElement(testDataCube[tankIndex]), xPostion, row1TankYPosition);
+					count++;
+				}
+			} catch (error) {
+				console.log(error.message);
+			}
+
+			//天车
+			try {
+				var row1FirstXPostion = 30;
+				var tankWidth = 31;
+
+				var row1PoleYPosition = 9;
+				for(let index = 0; index < testDataFB.length; index++){
+					if(testDataFB[index] === -1){
+						continue;
+					}
+					var xPosition = row1FirstXPostion + tankWidth * (testDataFB[index] % 30);
+					var yPosition = row1PoleYPosition + 130 * parseInt(testDataFB[index] / 30);
+					context.drawImage(FBElement(poleStatus[index]), xPosition, yPosition);
+				}
+			} catch (error) {
+				
+			}
+			//await new Promise(res => { setTimeout(res, 1000); });
+			
+			//sleep(1);
+			//alert(1)
+
+		}
+	}
+	
+	function cubeElement(cubeStatus) {
+		//槽位和飞巴
+		var imgTankNotUseFBOffBlue = document.getElementById("imgTankNotUseFBOffBlue");
+		var imgTankNotUseFBOffColourless = document.getElementById("imgTankNotUseFBOffColourless");
+		var imgTankNotUseFBOffPurple = document.getElementById("imgTankNotUseFBOffPurple");
+		var imgTankNotUseFBOnBlue = document.getElementById("imgTankNotUseFBOnBlue");
+		var imgTankNotUseFBOnColourless = document.getElementById("imgTankNotUseFBOnColourless");
+		var imgTankNotUseFBOnPurple = document.getElementById("imgTankNotUseFBOnPurple");
+		var imgTankUseFBOffBlue = document.getElementById("imgTankUseFBOffBlue");
+		var imgTankUseFBOffColourless = document.getElementById("imgTankUseFBOffColourless");
+		var imgTankUseFBOffPurple = document.getElementById("imgTankUseFBOffPurple");
+		var imgTankUseFBOnBlue = document.getElementById("imgTankUseFBOnBlue");
+		var imgTankUseFBOnColourless = document.getElementById("imgTankUseFBOnColourless");
+		var imgTankUseFBOnPurple = document.getElementById("imgTankUseFBOnPurple");
+
+		switch (cubeStatus) {
+			case 1:
+				return imgTankNotUseFBOffBlue;
+			case 2:
+				return imgTankNotUseFBOffColourless;
+			case 3:
+				return imgTankNotUseFBOffPurple;
+			case 4:
+				return imgTankNotUseFBOnBlue;
+			case 5:
+				return imgTankNotUseFBOnColourless;
+			case 6:
+				return imgTankNotUseFBOnPurple;
+			case 7:
+				return imgTankUseFBOffBlue;
+			case 8:
+				return imgTankUseFBOffColourless;
+			case 9:
+				return imgTankUseFBOffPurple;
+			case 10:
+				return imgTankUseFBOnBlue;
+			case 11:
+				return imgTankUseFBOnColourless;
+			case 12:
+				return imgTankUseFBOnPurple;
+		
+			default:
+				break;
+		}
+	}
+
+	function FBElement(FBStatus){
+		var imgTransporterDown = document.getElementById("imgTransporterDown");
+		var imgTransporterUp = document.getElementById("imgTransporterUp");
+		if(FBStatus === 0){
+			return imgTransporterDown;
+		}else if(FBStatus === 1){
+			return imgTransporterUp;
+		}
+	}
+
+	function parseOperation(operation){
+		if(operation[0] == 'move-pole-forward'){
+			return [[1, operation[1], operation[3], 'notchanged']];
+		}
+		else if(operation[0] == 'move-pole-inverse'){
+			return [[1, operation[1], operation[2], 'notchanged']];
+		}
+		else if(operation[0] == 'hangup-pole'){
+			return [[1, operation[1], operation[2], operation[3]],[2, operation[2], 0, operation[3]]];
+		}
+		else if(operation[0] == 'hangoff-pole' || operation[0] == 'hangoff-pole-blanking'){
+			return [[1, operation[1], operation[2], 'empty'], [2, operation[2], 1, operation[3]]];
+		}
+		else{
+			console.log('error operation');
+		}
+	}
+
+	function execute(operations){
+		for(let i = 0; i < operations.length; i++){
+			if(operations[i][0] === 2){
+				var index = Number(operations[i][1].substr(4));
+				var itemIndex = Number(operations[i][3].substr(1));
+				if(operations[i][2] === 0){
+					testDataItem[itemIndex] = -1;
+					testDataCube[index] = 7;
+					updateCubeAccordingItem(testDataItem);
+				}else if(operations[i][2] === 1){
+					testDataItem[itemIndex] = index;
+					testDataCube[index] = 10;
+				}
+			}else if(operations[i][0] === 1){
+				var poleIndex = Number(operations[i][1].substr(4));
+				testDataFB[poleIndex] = Number(operations[i][2].substr(4));
+				if(operations[i][3] === 'empty'){
+					poleStatus[poleIndex] = 0;
+				}else if(operations[i][3] === 'notchanged'){
+
+				}else{
+					poleStatus[poleIndex] = 1;
+				}
+			}
+		}
+	}
+
+	function updateCubeAccordingItem(items){
+		for(let i = 0; i < items.length; i++){
+			if(items[i] != -1){
+				testDataCube[items[i]] = 10;
+			}
+		}
+	}
+	function sleep(time){
+		for(var index = Date.now(); Date.now() - index < time; ){}
+	}
+	
+	</script>  
+ </html>

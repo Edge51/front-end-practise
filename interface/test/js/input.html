@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>input</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+		<script src="vue.js"></script>
+		<script src="jquery.js"></script>
+	</head>
+	<body>
+		<!--add pole-->
+		<form id="pole_input">
+			<label for="add_pole_name">车名</label>
+			<input type="text" name="pole_name" id="add_pole_name" v-model="name">
+			<label for="add_pole_index">车所在slot的下标</label>
+			<input type="number" name="pole_index" id="add_pole_index" v-model="index">
+			<input type="submit" value="确认添加" v-on:click='checkAndSend'>
+		</form>
+
+		<!--add slot-->
+		<form id="slot_input">
+			<label for="select_tank_added">请选择要添加的tank样式</label>
+			<select v-model="tank_selected" name="tank_style" id="select_tank_added">
+				<option value="TankNotUseFBOffBlue">TankNotUseFBOffBlue</option>
+				<option value="TankNotUseFBOffColourless">TankNotUseFBOffColourless</option>
+				<option value="TankNotUseFBOffPurple">TankNotUseFBOffPurple</option>
+				<option value="TankNotUseFBOnBlue">TankNotUseFBOnBlue</option>
+				<option value="TankNotUseFBOnColourless">TankNotUseFBOnColourless</option>
+				<option value="TankNotUseFBOnPurple">TankNotUseFBOnPurple</option>
+				<option value="TankUseFBOffBlue">TankUseFBOffBlue</option>
+				<option value="TankUseFBOffColourless">TankUseFBOffColourless</option>
+				<option value="TankUseFBOffPurple">TankUseFBOffPurple</option>
+				<option value="TankUseFBOnBlue">TankUseFBOnBlue</option>
+				<option value="TankUseFBOnColourless">TankUseFBOnColourless</option>
+				<option value="TankUseFBOnPurple">TankUseFBOnPurple</option>
+			</select>
+			<label for="add_slot_index">请输入添加的位置</label>
+			<input v-model="index" type="number" name="slot_index" id="add_slot_index">
+			<input v-on:click="checkAndSend"type="submit" value="确认添加">
+		</form>
+
+		<!--add item-->
+		<form id="item_input">
+			<label for="add_item_name">请输入添加物品的名称</label>
+			<input v-model="name" type="text" name="item_name" id="add_item_name">
+			<label for="add_item_slot_index">请输入添加物品哪一槽号</label>
+			<input v-model="index" type="number" name="item_slot_index" id="add_item_slot_index">
+			<input v-on:click="checkAndSend" type="submit" value="确认添加">
+		</form>
+		<script src="input.js"></script>
+	</body>
+</html>
